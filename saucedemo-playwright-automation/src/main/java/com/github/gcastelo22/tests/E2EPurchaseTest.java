@@ -1,0 +1,41 @@
+package com.github.gcastelo22.tests;
+
+import com.github.gcastelo22.core.BaseTest;
+import com.github.gcastelo22.pages.LoginPage;
+import org.junit.Test;
+
+/**
+ * End-to-End Test Suite for the Sauce Demo purchase journey.
+ * This suite verifies the primary user story from login to order confirmation
+ * using the Playwright engine.
+ */
+public class E2EPurchaseTest extends BaseTest {
+
+    @Test
+    public void shouldCompleteFullPurchaseFlow() {
+        // Test Data
+        String productName = "Sauce Labs Backpack";
+        String firstName = "Guilherme";
+        String lastName = "Castelo";
+        String zipCode = "1234-567";
+        String successMessage = "Thank you for your order!";
+
+        LOG.info("Starting E2E Purchase Flow for product: " + productName);
+
+        // Fluent Flow execution using Playwright 'page'
+        new LoginPage(page)
+                .loginAsStandardUser()
+                .verifyPageTitle("Products")
+                .addProductToCart(productName)
+                .verifyCartBadgeCount("1")
+                .goToCart()
+                .verifyPageTitle("Your Cart")
+                .verifyProductInCart(productName)
+                .clickCheckout()
+                .fillInformation(firstName, lastName, zipCode)
+                .clickFinish()
+                .verifyOrderCompletion(successMessage);
+
+        LOG.info("E2E Purchase Flow completed successfully.");
+    }
+}
